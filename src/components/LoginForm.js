@@ -1,29 +1,46 @@
 import React, { Component } from 'react';
 import {StyleSheet,Text,View, Button} from 'react-native';
-import {Input} from './common';
+import {Input,Spinner} from './common';
 import firebase from 'firebase';
 
 
 class LoginForm extends Component{
     state={
         email:'',
-        password:''
+        password:'',
+        error:'',
+        loading:false
     }
     onButtonClicked= () =>{
         const {email,password} =  this.state;
-
+        this.setState({
+            error:'',
+            loading:true
+        })
         firebase.auth().signInWithEmailAndPassword(email,password)
         .catch((err)=>{
-            debugger;
               firebase.auth().createUserWithEmailAndPassword(email,password)
                 .catch((error)=>{
-                    debugger;
-                    console.log("error");
+                    this.setState({
+                        error:'FAILED',
+                        loading:false
+                    })
                 });
         });
     }
-
     render(){
+        const {error,loading} = this.state;
+
+        const errorMessage = error ? (
+        <Text style={styles.errorMsg}> {error}</Text>
+        ): null;
+
+        const loginBtn = loading ? (
+            <Spinner/>
+        ):    
+        (<Button color="#22BA69" title='Login'
+               onPress={this.onButtonClicked}>
+        </Button>)
         return(
             <View style={styles.container}>
                 <View>
@@ -47,10 +64,9 @@ class LoginForm extends Component{
                           value={this.state.password}>
                 </Input>
                 </View>
+                {errorMessage}
                 <View style={styles.btnLogin}>
-                    <Button color="#22BA69" title='Login'
-                           onPress={this.onButtonClicked}>
-                    </Button>
+                    {loginBtn}
                 </View>
             </View>
 
@@ -65,6 +81,12 @@ const styles = StyleSheet.create({
         borderColor:"#fff",
         borderRadius:24,
         justifyContent:"center"
+    },
+    errorMsg:{
+        color:'red',
+        fontSize:20,
+        paddingTop:10,
+        alignSelf:'center'
     }
 
 });
