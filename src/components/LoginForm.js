@@ -13,10 +13,11 @@ class LoginForm extends Component{
     }
     onButtonClicked= () =>{
         const {email,password} =  this.state;
+        
         this.setState({
             error:'',
             loading:true
-        })
+        });
         firebase.auth().signInWithEmailAndPassword(email,password)
         .catch((err)=>{
               firebase.auth().createUserWithEmailAndPassword(email,password)
@@ -24,7 +25,7 @@ class LoginForm extends Component{
                     this.setState({
                         error:'FAILED',
                         loading:false
-                    })
+                    });
                 });
         });
     }
@@ -40,7 +41,7 @@ class LoginForm extends Component{
         ):    
         (<Button color="#22BA69" title='Login'
                onPress={this.onButtonClicked}>
-        </Button>)
+        </Button>);
         return(
             <View style={styles.container}>
                 <View>
